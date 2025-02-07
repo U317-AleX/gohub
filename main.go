@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"gohub/bootstrap"
 	btsConfig "gohub/config"
-	"gohub/pkg/captcha"
 	"gohub/pkg/config"
-	"gohub/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,16 +1,16 @@
 package middlewares
 
 import (
-    "gohub/pkg/logger"
-    "net"
-    "net/http"
-    "net/http/httputil"
-    "os"
-    "strings"
-    "time"
+	"gohub/pkg/logger"
+	"gohub/pkg/response"
+	"net"
+	"net/http/httputil"
+	"os"
+	"strings"
+	"time"
 
-    "github.com/gin-gonic/gin"
-    "go.uber.org/zap"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 // Recovery 使用 zap.Error() 来记录 Panic 和 call stack
@@ -55,9 +55,7 @@ func Recovery() gin.HandlerFunc {
                 )
 
                 // 返回 500 状态码
-                c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-                    "message": "服务器内部错误，请稍后再试",
-                })
+                response.Abort500(c)
             }
         }()
         c.Next()
