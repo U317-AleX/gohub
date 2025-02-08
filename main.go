@@ -6,7 +6,6 @@ import (
 	"gohub/bootstrap"
 	btsConfig "gohub/config"
 	"gohub/pkg/config"
-	"gohub/pkg/sms"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,11 +43,6 @@ func main() {
 
     // 初始化路由绑定
     bootstrap.SetupRoute(router)
-
-    sms.NewSMS().Send("15775591136", sms.Message{
-        Template: config.GetString("sms.aliyun.template_code"),
-        Data:     map[string]string{"code": "123456"},
-    })
 
     // 运行服务
     err := router.Run(":" + config.Get("app.port"))
