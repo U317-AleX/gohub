@@ -22,9 +22,11 @@ func RegisterAPIRoutes(r *gin.Engine) {
             authGroup.POST("/signup/email/exist", suc.IsEmailExist)
             
             //验证码Controller对象
-            vcc := new(auth.VerifyController)
+            vcc := new(auth.VerifyCodeController)
             //注册获取验证码图片的路径
             authGroup.POST("/verify-codes/captcha", vcc.ShowCaptcha)
+
+            authGroup.POST("/verify-codes/phone", vcc.SendUsingPhone)
         }
     }
 }
