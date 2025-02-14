@@ -64,13 +64,13 @@ type SignupUsingPhoneRequest struct{
     VerifyCode      string `json:"verify_code,omitempty" valid:"verify_code"`
 }
 
-//使用手机登录
+//使用手机注册
 func SignupUsingPhone(data interface{}, c *gin.Context) map[string][]string{
 
     //配置格式验证规则
     rules := govalidator.MapData{
-        "phone" : []string{"required", "digits:11", "not_exists:user,phone"},
-        "name" : []string{"required", "alpha_num", "between:3,20", "not_exists:user,name"},
+        "phone" : []string{"required", "digits:11", "not_exists:users,phone"},
+        "name" : []string{"required", "alpha_num", "between:3,20", "not_exists:users,name"},
         "password" : []string{"required", "min:6"},
         "password_confirm" : []string{"required"},
         "verify_code" : []string{"required", "digits:6"},
@@ -87,6 +87,7 @@ func SignupUsingPhone(data interface{}, c *gin.Context) map[string][]string{
             "required : 用户名必须填写",
             "alpha_num : 用户名格式错误, 只允许字母和数字",
             "between: 用户名长度须在3到20位之间",
+            "not_exists: 用户名已被占用",
         },
 
         "password" : []string{
@@ -114,6 +115,73 @@ func SignupUsingPhone(data interface{}, c *gin.Context) map[string][]string{
 
     //验证验证码是否正确
     errs = validators.ValidateVerifyCode(_data.Phone, _data.VerifyCode, errs)
+
+    return errs
+}
+
+type SignupUsingEmailRequest struct {
+    Email           string `json:"email,omitempty" valid:"email"`
+    VerifyCode      string `json:"verify_code,omitempty" valid:"verify_code"`
+    Name            string `valid:"name" json:"name"`
+    Password        string `valid:"password" json:"password,omitempty"`
+    PasswordConfirm string `valid:"password_confirm" json:"password_confirm,omitempty"`
+}
+
+
+//使用邮箱注册
+func SignupUsingEmail(data interface{}, c *gin.Context) map[string][]string{
+
+    //配置格式验证规则
+    rules := govalidator.MapData{
+        "email" : []string{"required", "min:4", "max:30", "email", "not_exists:users,email"},
+        "name" : []string{"required", "alpha_num", "between:3,20", "not_exists:users,name"},
+        "password" : []string{"required", "min:6"},
+        "password_confirm" : []string{"required"},
+        "verify_code" : []string{"required", "digits:6"},
+    }
+
+    //设置验证未通过时的错误信息
+    messages := govalidator.MapData{
+         "email": []string{
+            "required:Email 为必填项",
+            "min:Email 长度需大于 4",
+            "max:Email 长度需小于 30",
+            "email:Email 格式不正确，请提供有效的邮箱地址",
+            "not_exists:Email 已被占用",
+        },
+
+        "name" : []string{
+            "required : 用户名必须填写",
+            "alpha_num : 用户名格式错误, 只允许字母和数字",
+            "between: 用户名长度须在3到20位之间",
+            "not_exists: 用户名已被占用",
+        },
+
+        "password" : []string{
+            "required : 用户密码必须填写",
+            "min : 用户密码不少于六位数",
+        },
+
+        "password_confirm" : []string{
+            "required : 请确认密码",
+        },
+
+        "verify_code" : []string{
+            "required : 验证码必须填写",
+            "digit : 验证码必须为六位数",
+        },
+    }
+
+    //格式验证
+    errs := validate(data, rules, messages)
+
+    _data := data.(*SignupUsingEmailRequest)
+
+    //验证密码是否输入正确
+    errs = validators.ValidatePasswordConfirm(_data.Password, _data.PasswordConfirm, errs)
+
+    //验证验证码是否正确
+    errs = validators.ValidateVerifyCode(_data.Email, _data.VerifyCode, errs)
 
     return errs
 }
