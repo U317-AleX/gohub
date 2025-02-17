@@ -2,7 +2,8 @@
 package app
 
 import (
-    "gohub/pkg/config"
+	"gohub/pkg/config"
+	"time"
 )
 
 func IsLocal() bool {
@@ -15,4 +16,10 @@ func IsProduction() bool {
 
 func IsTesting() bool {
     return config.Get("app.env") == "testing"
+}
+
+// TimeInTimeZone 获取当前时区的时间
+func TimeInTimeZone() time.Time {
+    loc, _ := time.LoadLocation(config.Get("app.timezone"))
+    return time.Now().In(loc)
 }
