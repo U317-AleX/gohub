@@ -5,7 +5,6 @@ import (
 	v1 "gohub/app/http/controllers/api/v1"
 	"gohub/app/models/user"
 	"gohub/app/requests"
-	"gohub/pkg/bcrypt"
 	"gohub/pkg/response"
 
 	"github.com/gin-gonic/gin"
@@ -55,17 +54,15 @@ func (sc *SignupController) SignupUsingPhone(c *gin.Context) {
         return
     }
 
-    Password, err := bcrypt.HashPassword(request.Password)
-
     // 验证成功, 创建数据
     _user := user.User{
         Name : request.Name,
         Phone: request.Phone,
-        Password: Password,
+        Password: request.Password,
     }
     _user.Create()
 
-    if _user.ID > 0 && err == nil {
+    if _user.ID > 0 {
         response.CreatedJSON(c, gin.H{
             "data": _user,
         })
@@ -83,17 +80,15 @@ func (sc *SignupController) SignupUsingEmail(c *gin.Context) {
         return
     }
 
-    Password, err := bcrypt.HashPassword(request.Password)
-
     // 2. 验证成功，创建数据
     userModel := user.User{
         Name:     request.Name,
         Email:    request.Email,
-        Password: Password,
+        Password: request.Password,
     }
     userModel.Create()
 
-    if userModel.ID > 0 && err == nil {
+    if userModel.ID > 0 {
         response.CreatedJSON(c, gin.H{
             "data": userModel,
         })
