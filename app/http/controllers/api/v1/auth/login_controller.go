@@ -4,8 +4,8 @@ import (
 	v1 "gohub/app/http/controllers/api/v1"
 	"gohub/app/requests"
 	"gohub/pkg/auth"
-	"gohub/pkg/response"
 	"gohub/pkg/jwt"
+	"gohub/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -61,4 +61,20 @@ func (lc *LoginController) LoginByPassword(c *gin.Context) {
 	response.JSON(c, gin.H{
 		"token": token,
 	})
+}
+
+// RefreshToken 刷新 Access Token
+func (lc *LoginController) RefreshToken(c *gin.Context) {
+
+	// 生成新的 token
+	token, err := jwt.NewJWT().RefreshToken(c)
+
+	// 返回 token
+	if err != nil {
+		response.Unauthorized(c, "token 刷新失败")
+	} else {
+		response.JSON(c, gin.H{
+			"token": token,
+		})
+	}
 }
