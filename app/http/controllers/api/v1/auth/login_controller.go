@@ -1,0 +1,40 @@
+package auth
+
+import (
+	v1 "gohub/app/http/controllers/api/v1"
+	"gohub/app/requests"
+	"gohub/pkg/auth"
+	"gohub/pkg/response"
+	"gohub/pkg/jwt"
+
+	"github.com/gin-gonic/gin"
+)
+
+// LoginController 登录控制器
+type LoginController struct {
+	v1.BaseAPIController
+}
+
+// LoginByPhone 使用手机号和验证码登录
+func (lc *LoginController) LoginByPhone(c *gin.Context) {
+	// 验证表单
+	request := requests.LoginByPhoneRequest{}
+	if ok := requests.Validate(c, &request, requests.LoginByPhone); !ok {
+		return
+	}
+
+	// 验证成功, 登录
+	userModel, err := auth.LoginByPhone(request.Phone)
+	if err != nil {
+		response.Error(c, err, "用户不存在")
+		return
+	}
+
+	// 生成 token
+	token := jwt.NewJWT().IssueToken(userModel.GetStringID(), userModel.Name)
+	
+	// 返回 token
+	response.JSON(c, gin.H{
+		"token": token,
+	})
+}

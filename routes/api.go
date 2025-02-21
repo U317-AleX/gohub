@@ -2,9 +2,9 @@
 package routes
 
 import (
-    "gohub/app/http/controllers/api/v1/auth"
+	"gohub/app/http/controllers/api/v1/auth"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // RegisterAPIRoutes 注册网页相关路由
@@ -33,6 +33,12 @@ func RegisterAPIRoutes(r *gin.Engine) {
             authGroup.POST("/signup/using-phone", suc.SignupUsingPhone)
 
             authGroup.POST("/signup/using-email", suc.SignupUsingEmail)
+
+            // 登录
+            lgc := new(auth.LoginController)
+
+            // 使用手机号和验证码登录
+            authGroup.POST("/login/using-phone", lgc.LoginByPhone)
         }
     }
 }
