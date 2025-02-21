@@ -43,3 +43,49 @@ func LoginByPhone(data interface{}, c *gin.Context) map[string][]string {
 
 	return errs
 }
+
+// 使用密码登录
+type LoginByPasswordRequest struct {
+	LoginID 		string `json:"login_id" valid:"login_id"`
+	Password 		string `json:"password" valid:"password"`
+
+	CaptchaID		string `json:"captcha_id,omitempty" valid:"captcha_id"`
+	CaptchaAnswer 	string `json:"captcha_answer,omitempty" valid:"captcha_answer"`
+}
+
+// LoginByPassword 登录验证规则
+func LoginByPassword(data interface{}, c *gin.Context) map[string][]string {
+
+	rules := govalidator.MapData{
+		"login_id": []string{"required", "min:3"},
+		"password": []string{"required", "min:6"},
+		"captcha_id": []string{"required"},
+		"captcha_answer": []string{"required", "digits:6"},
+	}
+
+	message := govalidator.MapData{
+		"login_id": []string{
+			"required:登录名不能为空",
+			"min:登录名长度不能少于3位",
+		},
+		"password": []string{
+			"required:密码不能为空",
+			"min:密码长度不能少于6位",
+		},
+		"captcha_id": []string{
+			"required:图片验证码 ID 不能为空",
+		},
+		"captcha_answer": []string{
+			"required:图片验证码答案不能为空",
+			"digits:图片验证码答案长度必须为 6 位",
+		},
+	}
+
+	errs := validate(data, rules, message)
+
+	// 图片验证码
+	_data := data.(*LoginByPasswordRequest)
+	errs = validators.ValidateCaptcha(_data.CaptchaID, _data.CaptchaAnswer, errs)
+
+	return errs
+}

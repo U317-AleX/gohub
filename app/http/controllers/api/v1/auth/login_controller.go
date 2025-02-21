@@ -32,7 +32,31 @@ func (lc *LoginController) LoginByPhone(c *gin.Context) {
 
 	// 生成 token
 	token := jwt.NewJWT().IssueToken(userModel.GetStringID(), userModel.Name)
-	
+
+	// 返回 token
+	response.JSON(c, gin.H{
+		"token": token,
+	})
+}
+
+// LoginByPassword 使用密码登录
+func (lc *LoginController) LoginByPassword(c *gin.Context) {
+	// 验证表单
+	request := requests.LoginByPasswordRequest{}
+	if ok := requests.Validate(c, &request, requests.LoginByPassword); !ok {
+		return
+	}
+
+	// 验证成功, 登录
+	userModel, err := auth.Attempt(request.LoginID, request.Password)
+	if err != nil {
+		response.Unauthorized(c, "用户名或密码错误")
+		return
+	}
+
+	// 生成 token
+	token := jwt.NewJWT().IssueToken(userModel.GetStringID(), userModel.Name)
+
 	// 返回 token
 	response.JSON(c, gin.H{
 		"token": token,

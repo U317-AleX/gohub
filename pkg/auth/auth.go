@@ -7,10 +7,10 @@ import (
 )
 
 // Attempt 尝试登录
-func Attempt(email string, password string) (user.User, error) {
+func Attempt(loginID string, password string) (user.User, error) {
 
-	// 通过 email 获取用户
-	userModel := user.GetByMulti(email)
+	// 通过 loginID 获取用户
+	userModel := user.GetByMulti(loginID)
 	if userModel.ID == 0 {
 		return user.User{}, errors.New("用户不存在")
 	}
