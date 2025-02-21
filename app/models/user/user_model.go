@@ -28,3 +28,10 @@ func (userModel *User) Create() {
 func (userModel *User) ComparePassword(_password string) bool {
     return bcrypt.CheckPassword(_password, userModel.Password)
 }
+
+// Get 获取用户
+func Get(id string) User {
+    var user User
+    database.DB.First(&user, id)
+    return user
+}

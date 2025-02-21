@@ -3,9 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"gohub/app/http/middlewares"
 	"gohub/bootstrap"
 	btsConfig "gohub/config"
 	"gohub/pkg/config"
+	"gohub/pkg/response"
+    "gohub/pkg/auth"
 
 	"github.com/gin-gonic/gin"
 )
