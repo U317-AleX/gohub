@@ -1,8 +1,9 @@
 package user
 
 import (
-    "gohub/pkg/database"
-)
+	"gohub/pkg/database"
+
+	)
 
 // IsEmailExist 判断 Email 已被注册
 func IsEmailExist(email string) bool {
@@ -22,6 +23,13 @@ func IsPhoneExist(phone string) bool {
 func GetByPhone(phone string) User {
     var user User
     database.DB.Where("phone = ?", phone).First(&user)
+    return user
+}
+
+// GetByEmail 通过邮箱获取用户
+func GetByEmail(email string) User {
+    var user User
+    database.DB.Where("phone = ?", email).First(&user)
     return user
 }
 

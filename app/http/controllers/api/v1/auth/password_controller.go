@@ -13,16 +13,35 @@ type PasswordController struct {
 	v1.BaseAPIController
 }
 
-// ResetPassword 重置密码
-func (p *PasswordController) ResetPassword(c *gin.Context) {
+// ResetByPhone 重置密码
+func (p *PasswordController) ResetByPhone(c *gin.Context) {
 	// 验证表单
-	request := requests.ResetPasswordRequest{}
+	request := requests.ResetByPhonePasswordRequest{}
 	if ok := requests.Validate(c, &request, requests.ResetByPhone); !ok {
 		return
 	}
 
 	// 重置密码
 	userModel := user.GetByPhone(request.Phone)
+	if userModel.ID == 0 {
+		response.Abort404(c)
+	} else {
+		userModel.Password = request.Password
+		userModel.Save()
+		response.Success(c)
+	}
+}
+
+// ResetByEmail 重置密码
+func (p *PasswordController) ResetByEmail(c *gin.Context) {
+	// 验证表单
+	request := requests.ResetByEmailPasswordRequest{}
+	if ok := requests.Validate(c, &request, requests.ResetByEmail); !ok {
+		return
+	}
+
+	// 重置密码
+	userModel := user.GetByMulti(request.Email)
 	if userModel.ID == 0 {
 		response.Abort404(c)
 	} else {
