@@ -16,13 +16,16 @@ func RegisterAPIRoutes(r *gin.Engine) {
         authGroup := v1.Group("/auth")
         {
             suc := new(auth.SignupController)
+
             // 判断手机是否已注册
             authGroup.POST("/signup/phone/exist", suc.IsPhoneExist)
+
             // 判断 Email 是否已注册
             authGroup.POST("/signup/email/exist", suc.IsEmailExist)
             
             //验证码Controller对象
             vcc := new(auth.VerifyCodeController)
+            
             //注册获取验证码图片的路径
             authGroup.POST("/verify-codes/captcha", vcc.ShowCaptcha)
 
@@ -45,6 +48,11 @@ func RegisterAPIRoutes(r *gin.Engine) {
 
             // 刷新 token
             authGroup.POST("/login/refresh-token", lgc.RefreshToken)
+
+            pwc := new(auth.PasswordController)
+
+            // 重置密码
+            authGroup.POST("/password-reset/using-phone", pwc.ResetPassword)
         }
     }
 }

@@ -35,3 +35,9 @@ func Get(id string) User {
     database.DB.First(&user, id)
     return user
 }
+
+// Save 保存用户
+func (userModel *User) Save() (rowsAffected int64) {
+    database.DB.Save(&userModel)
+    return database.DB.RowsAffected
+}
